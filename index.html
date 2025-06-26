@@ -1,0 +1,101 @@
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+  .tomato {
+    width: 5vmin;
+    position: absolute;
+    top: -2.5vmin;
+    left: -2.5vmin;
+  }
+  .explosion {
+    image-rendering: pixelated;
+    width: 16vmin;
+    position: absolute;
+    top: -8vmin;
+    left: -8vmin;
+  }
+  .hidden {
+    display: none;
+  }
+</style>
+
+<img src="tomato.png" class="hidden">
+<img src="explosion.gif" class="hidden">
+
+<script>
+  const socket = new WebSocket("wss://irc-ws.chat.twitch.tv/");
+  const tomatos = [];
+
+  socket.addEventListener("open", e => {
+    socket.send("CAP REQ :twitch.tv/tags twitch.tv/commands twitch.tv/membership");
+    socket.send("PASS SCHMOOPIIE");
+    socket.send("NICK justinfan18858");
+  });
+
+  socket.addEventListener("message", e => {
+    if(e.data.match(/^:tmi.twitch.tv 001 justinfan18858 :Welcome, GLHF!/)) {
+      socket.send("JOIN #" + (window.location.search.replace("?c=", "")));
+    }
+    if(e.data.includes("!tomato")) {
+      const telem = document.createElement("IMG");
+      telem.src = "tomato.png";
+      telem.className = "tomato";
+
+      const tomato = {
+        elem: telem,
+        x: (Math.random() * 0.6 + 0.2) * window.innerWidth,
+        y: (Math.random() * 0.6 + 0.1) * window.innerHeight,
+        r: Math.random() * 360,
+        z: 5 + Math.random(),
+        xv: (Math.random() - 0.5) * 2,
+        yv: Math.random() * 2 - 10,
+        rv: (Math.random() - 0.5) * 0.6
+      }
+
+      updatePos(tomato);
+      document.body.appendChild(tomato.elem);
+      tomatos.push(tomato);
+    }
+  });
+
+  function updatePos(tomato) {
+    tomato.elem.style.transform = `translate(${tomato.x}px, ${tomato.y}px) rotate(${tomato.r}rad) scale(${1 + tomato.z / 5})`;
+  }
+
+  var last = Date.now();
+  function update() {
+    const delta = Math.min(4, (Date.now() - last) / 16);
+    last = Date.now();
+    requestAnimationFrame(update);
+
+    for(var tomato of tomatos) {
+      tomato.x += tomato.xv * delta;
+      tomato.y += tomato.yv * delta;
+      tomato.z -= 0.08 * delta;
+      tomato.r += tomato.rv * delta;
+      tomato.yv += 0.3 * delta;
+      updatePos(tomato);
+    }
+
+    for(var i = 0; i < tomatos.length; i++)
+      if(tomatos[i].z <= 0) {
+        const exp = document.createElement("IMG");
+        exp.src = "explosion.gif";
+        exp.className = "explosion";
+
+        exp.style.transform = `translate(${tomatos[i].x}px, ${tomatos[i].y}px)`;
+
+        document.body.appendChild(exp);
+        setTimeout(() => {
+          document.body.removeChild(exp);
+        }, 1700);
+
+        document.body.removeChild(tomatos[i].elem);
+        tomatos.splice(i--, 1);
+      }
+  }
+  update();
+</script>
