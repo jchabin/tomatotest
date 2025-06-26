@@ -20,11 +20,21 @@
   .hidden {
     display: none;
   }
+  #bigtext {
+    color: red;
+    font-size: 10vmin;
+    position: absolute;
+    top: 50vh;
+    left: 50vw;
+    transform: translate(-50%, -50%);
+  }
 </style>
 
 <img src="tomato.png" class="hidden">
 <img src="explosion.gif" class="hidden">
 <video src="explosion.webm" class="hidden"></video>
+
+<div id="bigtext"></div>
 
 <script>
   var socket = new WebSocket("wss://irc-ws.chat.twitch.tv/");
@@ -76,6 +86,31 @@
       document.body.appendChild(tomato.elem);
       tomatos.push(tomato);
     }
+
+    if(!e.data.includes("!tomato") && e.data.includes("display-name=chabmeese;") && e.data.match(/display-name/g).length == 1) {
+      const text = e.data.split("#chabmeese :")[1];
+
+      if(text.includes("yt:")) {
+        const frame = document.createElement("IFRAME");
+        frame.height = window.innerHeight;
+        frame.width = window.innerWidth;
+        frame.src = `https://www.youtube.com/embed/${text.split("yt:")[1]}?autoplay=1&modestbranding=1`;
+        frame.allow = "autoplay";
+        document.body.appendChild(frame);
+
+        setTimeout(() => {
+          document.body.removeChild(frame);
+        }, 10000);
+      } else {
+        document.getElementById("bigtext").innerHTML = text;
+
+        setTimeout(() => {
+          document.getElementById("bigtext").innerHTML = "";
+        }, 5000);
+      }
+    }
+
+    console.log(e.data);
 
     awaitingPong = false;
   });
