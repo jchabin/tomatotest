@@ -88,7 +88,8 @@
     }
 
     if(!e.data.includes("!tomato") && e.data.includes("display-name=chabmeese;") && e.data.match(/display-name/g).length == 1) {
-      const text = e.data.split("#chabmeese :")[1];
+      console.log(e.data);
+      const text = e.data.split(`#${(window.location.search.replace("?c=", ""))} :`)[1];
 
       if(text.includes("yt:")) {
         const frame = document.createElement("IFRAME");
