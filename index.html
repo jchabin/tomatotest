@@ -24,6 +24,7 @@
 
 <img src="tomato.png" class="hidden">
 <img src="explosion.gif" class="hidden">
+<video src="explosion.webm" class="hidden"></video>
 
 <script>
   var socket = new WebSocket("wss://irc-ws.chat.twitch.tv/");
@@ -100,13 +101,17 @@
 
     for(var i = 0; i < tomatos.length; i++)
       if(tomatos[i].z <= 0) {
-        const exp = document.createElement("IMG");
-        exp.src = "explosion.gif";
+        const exp = document.createElement("VIDEO");
+        exp.src = "explosion.webm";
         exp.className = "explosion";
+        exp.muted = true;
+        exp.playsinline = true;
+        exp.autplay = true;
 
         exp.style.transform = `translate(${tomatos[i].x}px, ${tomatos[i].y}px)`;
 
         document.body.appendChild(exp);
+        exp.play();
         setTimeout(() => {
           document.body.removeChild(exp);
         }, 1700);
