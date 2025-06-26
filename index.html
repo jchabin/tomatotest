@@ -56,7 +56,7 @@
     if(e.data.match(/^:tmi.twitch.tv 001 justinfan18858 :Welcome, GLHF!/)) {
       socket.send("JOIN #" + (window.location.search.replace("?c=", "")));
     }
-    if(e.data.includes("!tomato")) {
+    for(var i = 0; i < (e.data.match(/!tomato/g) || []).length; i++) {
       const telem = document.createElement("IMG");
       telem.src = "tomato.png";
       telem.className = "tomato";
