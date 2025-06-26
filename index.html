@@ -26,8 +26,24 @@
 <img src="explosion.gif" class="hidden">
 
 <script>
-  const socket = new WebSocket("wss://irc-ws.chat.twitch.tv/");
+  var socket = new WebSocket("wss://irc-ws.chat.twitch.tv/");
   const tomatos = [];
+
+  var awaitingPong = false;
+  setInterval(() => {
+    if(awaitingPong) {
+      socket = new WebSocket("wss://irc-ws.chat.twitch.tv/");
+
+      socket.addEventListener("open", e => {
+        socket.send("CAP REQ :twitch.tv/tags twitch.tv/commands twitch.tv/membership");
+        socket.send("PASS SCHMOOPIIE");
+        socket.send("NICK justinfan18858");
+      });
+    }
+
+    socket.send("PING");
+    awaitingPong = true;
+  }, 10000);
 
   socket.addEventListener("open", e => {
     socket.send("CAP REQ :twitch.tv/tags twitch.tv/commands twitch.tv/membership");
@@ -59,6 +75,8 @@
       document.body.appendChild(tomato.elem);
       tomatos.push(tomato);
     }
+
+    awaitingPong = false;
   });
 
   function updatePos(tomato) {
