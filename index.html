@@ -23,6 +23,7 @@
   #bigtext {
     color: red;
     font-size: 10vmin;
+    width: 90vw;
     position: absolute;
     top: 50vh;
     left: 50vw;
@@ -66,28 +67,33 @@
     if(e.data.match(/^:tmi.twitch.tv 001 justinfan18858 :Welcome, GLHF!/)) {
       socket.send("JOIN #" + (window.location.search.replace("?c=", "")));
     }
-    for(var i = 0; i < (e.data.match(/!tomato/g) || []).length; i++) {
-      const telem = document.createElement("IMG");
-      telem.src = "tomato.png";
-      telem.className = "tomato";
+    if(e.data.includes("!tomato")) {
+      for(var i = 0; i < (e.data.match(/!tomato/g) || []).length; i++) {
+        setTimeout(() => {
+          const telem = document.createElement("IMG");
+          telem.src = "tomato.png";
+          telem.className = "tomato";
 
-      const tomato = {
-        elem: telem,
-        x: (Math.random() * 0.6 + 0.2) * window.innerWidth,
-        y: (Math.random() * 0.6 + 0.1) * window.innerHeight,
-        r: Math.random() * 360,
-        z: 5 + Math.random(),
-        xv: (Math.random() - 0.5) * 2,
-        yv: Math.random() * 2 - 10,
-        rv: (Math.random() - 0.5) * 0.6
+          const tomato = {
+            elem: telem,
+            x: (Math.random() * 0.8 + 0.1) * window.innerWidth,
+            y: (Math.random() * 0.8 + 0.1) * window.innerHeight,
+            r: Math.random() * 360,
+            z: 5 + Math.random(),
+            xv: (Math.random() - 0.5) * 2,
+            yv: Math.random() * 2 - 10,
+            rv: (Math.random() - 0.5) * 0.6
+          }
+
+          updatePos(tomato);
+          document.body.appendChild(tomato.elem);
+          tomatos.push(tomato);
+        }, i * 80);
       }
-
-      updatePos(tomato);
-      document.body.appendChild(tomato.elem);
-      tomatos.push(tomato);
+      return;
     }
 
-    if(!e.data.includes("!tomato") && e.data.includes("display-name=chabmeese;") && e.data.match(/display-name/g).length == 1) {
+    if(e.data.includes("display-name=chabmeese;") && e.data.match(/display-name/g).length == 1) {
       console.log(e.data);
       const text = e.data.split(`#${(window.location.search.replace("?c=", ""))} :`)[1];
 
@@ -102,6 +108,8 @@
         setTimeout(() => {
           document.body.removeChild(frame);
         }, 10000);
+      } else if(text.includes("!reload")) {
+        location.reload();
       } else {
         document.getElementById("bigtext").innerHTML = text;
 
