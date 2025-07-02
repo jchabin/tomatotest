@@ -32,7 +32,9 @@
 </style>
 
 <img src="tomato.png" class="hidden">
-<img src="explosion.gif" class="hidden">
+<img src="chiikawa.webp" class="hidden">
+<img src="usagi.webp" class="hidden">
+<img src="hachiware.webp" class="hidden">
 <video src="explosion.webm" class="hidden"></video>
 
 <div id="bigtext"></div>
@@ -63,31 +65,57 @@
     socket.send("NICK justinfan18858");
   });
 
+  const imgUrls = {
+    "!tomato": "tomato.png",
+    "!chiikawa": "chiikawa.webp",
+    "!usagi": "usagi.webp",
+    "!hachiware": "hachiware.webp"
+  }
+
+  function toss(type) {
+    const telem = document.createElement("IMG");
+    telem.src = imgUrls[type] ?? "tomato.png";
+    telem.className = "tomato";
+
+    const tomato = {
+      elem: telem,
+      x: (Math.random() * 0.8 + 0.1) * window.innerWidth,
+      y: (Math.random() * 0.8 + 0.1) * window.innerHeight,
+      r: Math.random() * 360,
+      z: 5 + Math.random(),
+      xv: (Math.random() - 0.5) * 2,
+      yv: Math.random() * 2 - 10,
+      rv: (Math.random() - 0.5) * 0.6
+    }
+
+    updatePos(tomato);
+    document.body.appendChild(tomato.elem);
+    tomatos.push(tomato);
+  }
+
   socket.addEventListener("message", e => {
     if(e.data.match(/^:tmi.twitch.tv 001 justinfan18858 :Welcome, GLHF!/)) {
       socket.send("JOIN #" + (window.location.search.replace("?c=", "")));
     }
-    if(e.data.includes("!tomato")) {
+    if(e.data.includes("!tomato") || e.data.includes("!chiikawa") || e.data.includes("!usagi") || e.data.includes("!hachiware")) {
       for(var i = 0; i < (e.data.match(/!tomato/g) || []).length; i++) {
         setTimeout(() => {
-          const telem = document.createElement("IMG");
-          telem.src = "tomato.png";
-          telem.className = "tomato";
-
-          const tomato = {
-            elem: telem,
-            x: (Math.random() * 0.8 + 0.1) * window.innerWidth,
-            y: (Math.random() * 0.8 + 0.1) * window.innerHeight,
-            r: Math.random() * 360,
-            z: 5 + Math.random(),
-            xv: (Math.random() - 0.5) * 2,
-            yv: Math.random() * 2 - 10,
-            rv: (Math.random() - 0.5) * 0.6
-          }
-
-          updatePos(tomato);
-          document.body.appendChild(tomato.elem);
-          tomatos.push(tomato);
+          toss("!tomato");
+        }, i * 80);
+      }
+      for(var i = 0; i < (e.data.match(/!chiikawa/g) || []).length; i++) {
+        setTimeout(() => {
+          toss("!chiikawa");
+        }, i * 80);
+      }
+      for(var i = 0; i < (e.data.match(/!usagi/g) || []).length; i++) {
+        setTimeout(() => {
+          toss("!usagi");
+        }, i * 80);
+      }
+      for(var i = 0; i < (e.data.match(/!hachiware/g) || []).length; i++) {
+        setTimeout(() => {
+          toss("!hachiware");
         }, i * 80);
       }
       return;
