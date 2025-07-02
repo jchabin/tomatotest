@@ -29,6 +29,16 @@
     left: 50vw;
     transform: translate(-50%, -50%);
   }
+  #bigimage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
 </style>
 
 <img src="tomato.png" class="hidden">
@@ -38,6 +48,7 @@
 <video src="explosion.webm" class="hidden"></video>
 
 <div id="bigtext"></div>
+<div id="bigimage"></div>
 
 <script>
   var socket = new WebSocket("wss://irc-ws.chat.twitch.tv/");
@@ -138,6 +149,13 @@
         }, 10000);
       } else if(text.includes("!reload")) {
         location.reload();
+      } else if(text.includes("img:")) {
+        console.log(`url('${text.split("img:")[1]}')`);
+        document.getElementById("bigimage").style.backgroundImage = `url("${text.split("img:")[1].trim()}")`;
+
+        setTimeout(() => {
+          document.getElementById("bigimage").style.backgroundImage = "";
+        }, 5000);
       } else {
         document.getElementById("bigtext").innerHTML = text;
 
