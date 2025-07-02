@@ -76,6 +76,7 @@
     socket.send("NICK justinfan18858");
   });
 
+  const ADMINS = ["chabmeese", "missydais_"];
   const imgUrls = {
     "!tomato": "tomato.png",
     "!chiikawa": "chiikawa.webp",
@@ -132,7 +133,8 @@
       return;
     }
 
-    if(e.data.includes("display-name=chabmeese;") && e.data.match(/display-name/g).length == 1) {
+    const username = (e.data.match(/display-name=([^;]+)/) ?? [])[1];
+    if(ADMINS.includes(username)) {
       console.log(e.data);
       const text = e.data.split(`#${(window.location.search.replace("?c=", ""))} :`)[1];
 
