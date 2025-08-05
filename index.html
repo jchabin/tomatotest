@@ -142,13 +142,20 @@
         const frame = document.createElement("IFRAME");
         frame.height = window.innerHeight;
         frame.width = window.innerWidth;
-        frame.src = `https://www.youtube.com/embed/${text.split("yt:")[1]}?autoplay=1&modestbranding=1`;
+
+        let id = text.split("yt:")[1], duration = 10;
+        if(id.split(" ").length > 1) {
+          duration = id.split(" ")[1];
+          id = id.split(" ")[0];
+        }
+
+        frame.src = `https://www.youtube.com/embed/${id}?autoplay=1&modestbranding=1`;
         frame.allow = "autoplay";
         document.body.appendChild(frame);
 
         setTimeout(() => {
           document.body.removeChild(frame);
-        }, 10000);
+        }, duration * 1000);
       } else if(text.includes("!reload")) {
         location.reload();
       } else if(text.includes("img:")) {
