@@ -145,7 +145,7 @@
 
         let id = text.split("yt:")[1], duration = 10;
         if(id.split(" ").length > 1) {
-          duration = id.split(" ")[1];
+          duration = parseFloat(id.split(" ")[1]) ?? duration;
           id = id.split(" ")[0];
         }
 
